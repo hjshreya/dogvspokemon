@@ -10,4 +10,4 @@ with open("data/logo.svg", "r") as svg_file:
 
 # Embed the SVG logo using HTML
 st.markdown(f'<div style="text-align:center">{svg_logo}</div>', unsafe_allow_html=True)
-st.subheader("Find out which Pokémon your dog would fight against")
+st.subheader("Find out which Pokémon your dog would fight against") 
