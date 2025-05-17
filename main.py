@@ -10,7 +10,7 @@ with open("data/logo.svg", "r") as svg_file:
 
 # Embed the SVG logo using HTML
 st.markdown(f'<div style="text-align:center">{svg_logo}</div>', unsafe_allow_html=True)
-st.subheader("Find out which Pokémon your dog would fight against") 
+st.subheader("Find out which Pokémon your dog would fight against")
 
 # Function to crop and resize the image
 def crop_and_resize(image, size=(255, 255)):
@@ -31,6 +31,7 @@ def crop_and_resize(image, size=(255, 255)):
     # Resize the cropped image
     resized_image = cropped_image.resize(size, Image.LANCZOS)
     return resized_image
+
 # Upload image
 uploaded_image = st.file_uploader("Upload a picture of your dog", type=["jpg", "jpeg", "png"])
 
@@ -68,3 +69,17 @@ if st.button("Find Pokémon Opponent", disabled=uploaded_image is None):
             if current_diff < closest_weight_diff:
                 closest_weight_diff = current_diff
                 closest_pokemon = pokemon_info
+
+        # Display the results
+        if closest_pokemon:
+            st.write(f"The perfect opponent is **{closest_pokemon['name'].capitalize()}**!")
+
+            # Load the template and fonts
+            template = Image.open("data/plantilla.png").convert("RGBA")
+            try:
+                font_path = "fonts/pokemon_classic.ttf"
+                font_name = ImageFont.truetype(font_path, 45)
+                font_weight = ImageFont.truetype(font_path, 30)
+            except IOError:
+                font_name = ImageFont.load_default()
+                font_weight = ImageFont.load_default()
