@@ -83,3 +83,70 @@ if st.button("Find Pokémon Opponent", disabled=uploaded_image is None):
             except IOError:
                 font_name = ImageFont.load_default()
                 font_weight = ImageFont.load_default()
+
+            # Create a drawing object for the template
+            draw = ImageDraw.Draw(template)
+
+            # Load and process the dog's and Pokémon's images
+            dog_image = Image.open(uploaded_image)
+            dog_image = crop_and_resize(dog_image)
+
+            pokemon_image_url = closest_pokemon['sprites']['front_default']
+            pokemon_image = Image.open(requests.get(pokemon_image_url, stream=True).raw).convert("RGBA").resize((255, 255))
+
+            # Hardcoded positions for the elements
+            positions = {
+                "dog_name": (300, 490),
+                "dog_weight": (230, 565),
+                "dog_image": (167, 226),
+                "pokemon_name": (990, 490),
+                "pokemon_weight": (925, 565),
+                "pokemon_image": (855, 232),
+            }
+
+            # Calculate text width to center names
+            bbox_dog_name = draw.textbbox((0, 0), dog_name, font=font_name)
+            bbox_pokemon_name = draw.textbbox((0, 0), closest_pokemon['name'].capitalize(), font=font_name)
+
+            dog_name_width = bbox_dog_name[2] - bbox_dog_name[0]
+            pokemon_name_width = bbox_pokemon_name[2] - bbox_pokemon_name[0]
+
+            # Calculate new X positions to center the names
+            centered_dog_name = (positions["dog_name"][0] - dog_name_width // 2, positions["dog_name"][1])
+            centered_pokemon_name = (positions["pokemon_name"][0] - pokemon_name_width // 2, positions["pokemon_name"][1])
+
+            # Format weights to have one decimal place
+            formatted_dog_weight = f"{dog_weight:.1f} kg"
+            formatted_pokemon_weight = f"{closest_pokemon['weight'] / 10:.1f} kg"
+
+            # Draw the texts (name and weight) on the template
+            draw.text(centered_dog_name, dog_name, font=font_name, fill="white")
+            draw.text(positions["dog_weight"], formatted_dog_weight, font=font_weight, fill="white")
+            draw.text(centered_pokemon_name, closest_pokemon['name'].capitalize(), font=font_name, fill="white")
+            draw.text(positions["pokemon_weight"], formatted_pokemon_weight, font=font_weight, fill="white")
+
+            # Paste images onto the template at specified positions
+            template.paste(dog_image, positions["dog_image"], dog_image)
+            template.paste(pokemon_image, positions["pokemon_image"], pokemon_image)
+
+            # Convert final image to RGB
+            final_template = template.convert("RGB")
+
+            # Display the final result
+            st.image(final_template)
+
+            # Create a file for the final image
+            buffer = io.BytesIO()
+            final_template.save(buffer, format="PNG")
+            buffer.seek(0)
+
+            # Button to download the image
+            st.download_button(
+                label="Download Image",
+                data=buffer,
+                file_name="pokemon_vs_dog_result.png",
+                mime="image/png"
+            )
+
+    else:
+        st.error("Please enter a valid weight.")
