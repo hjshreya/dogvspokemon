@@ -1,2 +1,2 @@
-# dogvs
-under construction
+# dogvspokemon
+a fun project made with pokemon api
