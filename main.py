@@ -148,5 +148,5 @@ if st.button("Find Pokémon Opponent", disabled=uploaded_image is None):
                 mime="image/png"
             )
 
-    else:
+    else: 
         st.error("Please enter a valid weight.")
