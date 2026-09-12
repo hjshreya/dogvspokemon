@@ -147,7 +147,7 @@ if st.button("Find Pokémon Opponent", disabled=uploaded_image is None):
                 file_name="pokemon_vs_dog_result.png",
                 mime="image/png"
             )
-             social_media_links = []
+            social_media_links = []
 
             social_media_icons = SocialMediaIcons(social_media_links)
             social_media_icons.render()
